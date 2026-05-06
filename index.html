@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PELACAKAN SAMPEL LOKA LABKESMAS TANAH BUMBU</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background-color: #F4F7F6; min-height: 100vh; padding: 20px; color: #334155; }
+    .container { max-width: 1000px; margin: 0 auto; background: #FFFFFF; border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 177, 169, 0.1); overflow: hidden; }
+    
+    .header { background: #00B1A9; color: #FFFFFF; padding: 40px 20px; border-bottom: 5px solid #D2DC00; position: relative; min-height: 180px; display: flex; align-items: center; justify-content: center; }
+    .logo-container { position: absolute; left: 30px; top: 50%; transform: translateY(-50%); width: 150px; height: 150px; background: none; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease; z-index: 10; }
+    .logo-container:hover { transform: translateY(-50%) scale(1.1); }
+    .logo-container img { width: 100%; height: 100%; object-fit: contain; }
+    .header-text { text-align: center; }
+    .header h1 { font-size: 28px; font-weight: 700; letter-spacing: 1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); margin: 0; }
+    .header p { font-size: 15px; font-weight: 500; color: #F0Fdfa; margin-top: 5px; letter-spacing: 0.5px; }
+
+    .content { padding: 40px; }
+    .search-section { background: #F8FAFC; padding: 30px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #00B1A9; }
+    .search-box { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+    .search-box label { font-weight: 600; color: #008781; font-size: 15px; }
+    .search-box input { flex: 1; min-width: 250px; padding: 15px 20px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 15px; font-family: 'Poppins', sans-serif; transition: all 0.3s ease; }
+    .search-box input:focus { outline: none; border-color: #00B1A9; box-shadow: 0 0 0 3px rgba(0, 177, 169, 0.15); }
+    .search-box button { padding: 15px 30px; background: #00B1A9; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; }
+    .search-box button:hover { background: #00968F; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 177, 169, 0.3); }
+    .search-box button:disabled { background: #CBD5E1; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .skeleton-wrapper { display: none; }
+    .skeleton-wrapper.active { display: block; }
+    .skeleton-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
+    .skeleton { background: #eee; background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%); border-radius: 5px; background-size: 200% 100%; animation: 1.5s shine linear infinite; }
+    @keyframes shine { to { background-position-x: -200%; } }
+    .skel-title { height: 25px; width: 40%; margin-bottom: 25px; }
+    .skel-text { height: 15px; width: 80%; margin-bottom: 12px; }
+    .skel-text.short { width: 50%; margin-bottom: 30px; }
+    .skel-timeline { display: flex; justify-content: space-between; position: relative; }
+    .skel-line { position: absolute; top: 15px; left: 5%; right: 5%; height: 3px; background: #ececec; z-index: 1; }
+    .skel-circle { width: 35px; height: 35px; border-radius: 50%; z-index: 2; border: 3px solid #fff; }
+
+    .results { display: none; }
+    .results.active { display: block; animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .results-header { background: #00B1A9; color: white; padding: 20px 25px; border-radius: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,177,169,0.2); flex-wrap: wrap; gap: 15px;}
+    .results-header h2 { font-size: 15px; font-weight: 500; }
+    .results-header .reg-number { font-size: 26px; font-weight: 700; color: #D2DC00; line-height: 1.2;}
+    
+    .btn-wa-admin { background: #25D366; color: white; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; border: 2px solid transparent; }
+    .btn-wa-admin:hover { background: #128C7E; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4); }
+
+    .cards-grid { display: grid; gap: 20px; }
+    .sample-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 15px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: transform 0.3s, box-shadow 0.3s; }
+    .sample-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 177, 169, 0.1); border-color: #00B1A9; }
+    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #E2E8F0; }
+    .card-title { font-size: 18px; font-weight: 700; color: #00B1A9; display: flex; align-items: center; gap: 10px; }
+    .card-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .info-item { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #475569; }
+    .info-item i { color: #00B1A9; font-size: 16px; width: 20px; text-align: center; }
+    
+    .status-badge { display: inline-block; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+    .status-selesai { background: #D2DC00; color: #2D3000; }
+    .status-proses { background: #E0F2FE; color: #0284C7; }
+    .status-ditolak { background: #FEE2E2; color: #B91C1C; } 
+    .status-default { background: #F1F5F9; color: #64748B; }
+
+    .timeline-wrapper { position: relative; padding-top: 10px; background: #F8FAFC; padding: 20px; border-radius: 12px; border: 1px solid #E2E8F0; }
+    .timeline-track { position: absolute; top: 35px; left: 10%; right: 10%; height: 3px; background: #CBD5E1; z-index: 1; }
+    .timeline-steps { display: flex; justify-content: space-between; position: relative; z-index: 2; }
+    .t-step { flex: 1; text-align: center; }
+    .t-icon { width: 35px; height: 35px; margin: 0 auto 10px; background: #FFFFFF; border: 3px solid #CBD5E1; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #94A3B8; font-size: 14px; transition: all 0.4s ease; }
+    .t-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;}
+    .t-date { font-size: 11px; color: #94A3B8; margin-top: 3px; font-weight: 500;}
+
+    .t-step.active .t-icon { background: #00B1A9; border-color: #00B1A9; color: #FFFFFF; box-shadow: 0 0 0 4px rgba(0, 177, 169, 0.2); }
+    .t-step.active .t-label { color: #00B1A9; }
+    .t-step.active .t-date { color: #334155; }
+    .t-step.completed .t-icon { background: #D2DC00; border-color: #D2DC00; color: #2D3000; box-shadow: 0 0 0 4px rgba(210, 220, 0, 0.3); }
+    .t-step.completed .t-label { color: #2D3000; }
+    
+    .t-step.rejected .t-icon { background: #EF4444; border-color: #EF4444; color: #FFFFFF; box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2); }
+    .t-step.rejected .t-label { color: #B91C1C; }
+    .t-step.rejected .t-date { color: #7F1D1D; }
+
+    .timeline-kendala { margin-top: 20px; padding: 12px 15px; background-color: #FFFBEB; border: 1px solid #FCD34D; border-radius: 8px; color: #92400E; font-size: 13px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .timeline-kendala i { color: #F59E0B; font-size: 16px; margin-top: 2px; }
+    .timeline-kendala strong { color: #92400E; display: block; margin-bottom: 2px; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+
+    .timeline-penolakan { margin-top: 20px; padding: 12px 15px; background-color: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; color: #991B1B; font-size: 13px; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .timeline-penolakan i { color: #EF4444; font-size: 16px; margin-top: 2px; }
+    .timeline-penolakan strong { color: #7F1D1D; display: block; margin-bottom: 2px; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+
+    .main-footer-wrapper { margin-top: 50px; padding-top: 25px; border-top: 2px dashed #E2E8F0; display: flex; justify-content: space-between; align-items: center; gap: 30px; }
+    .footer-contact-side h3 { font-size: 15px; color: #00B1A9; margin-bottom: 15px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .contact-links { display: flex; flex-wrap: wrap; gap: 15px 25px; }
+    .contact-item { display: flex; align-items: center; gap: 8px; color: #475569; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; }
+    .contact-item:hover { transform: translateX(3px); }
+    .contact-item.wa:hover { color: #25D366; } .contact-item.email:hover { color: #EA4335; } .contact-item.fb:hover { color: #1877F2; } .contact-item.ig:hover { color: #E1306C; }
+    .footer-logo-side.decor-image-container { max-width: 140px; height: auto; overflow: hidden; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 177, 169, 0.08); border: 2px solid #E2E8F0; }
+    .footer-logo-side img { width: 100%; height: auto; object-fit: contain; display: block; }
+
+    .no-data { text-align: center; padding: 60px 20px; color: #64748B; display: none; }
+    .no-data.active { display: block; }
+    .error-message { background: #FEF2F2; color: #991B1B; padding: 15px; border-radius: 10px; margin-top: 20px; border-left: 5px solid #EF4444; display: none; }
+    .error-message.active { display: block; }
+
+    @media (max-width: 850px) {
+      .header { flex-direction: column; text-align: center; min-height: auto; padding-top: 150px; }
+      .logo-container { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 130px; height: 130px; }
+      .logo-container:hover { transform: translateX(-50%) scale(1.1); }
+      .header-text { text-align: center; }
+      .header h1 { font-size: 22px; }
+      .content { padding: 20px; }
+      .results-header { flex-direction: column; text-align: center; gap: 15px; }
+      .btn-wa-admin { width: 100%; justify-content: center; } 
+      .card-top { flex-direction: column; gap: 15px; align-items: flex-start; }
+      .t-label, .t-date { font-size: 9px; }
+      .t-icon { width: 28px; height: 28px; font-size: 11px; }
+      .timeline-track { top: 28px; }
+      .main-footer-wrapper { flex-direction: column-reverse; text-align: center; gap: 20px; }
+      .contact-links { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <div class="header">
+      <div class="logo-container">
+        <img src="https://i.postimg.cc/7ZLdY7Tg/Picture12.png" alt="Logo">
+      </div>
+      <div class="header-text">
+        <h1>PELACAKAN SAMPEL</h1>
+        <p>LOKA LABKESMAS TANAH BUMBU</p>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="search-section">
+        <div class="search-box">
+          <label for="regInput">Nomor Tracking:</label>
+          <input type="text" id="regInput" placeholder="Masukkan nomor tracking yang diberikan admin kami" autocomplete="off">
+          <button onclick="searchData()" id="searchBtn"><i class="fas fa-search"></i> Lacak</button>
+        </div>
+      </div>
+
+      <div class="skeleton-wrapper" id="loading">
+        <div class="skeleton-card">
+          <div class="skeleton skel-title"></div>
+          <div class="skeleton skel-text"></div>
+          <div class="skeleton skel-text short"></div>
+          <div class="skel-timeline">
+            <div class="skel-line"></div>
+            <div class="skeleton skel-circle"></div>
+            <div class="skeleton skel-circle"></div>
+            <div class="skeleton skel-circle"></div>
+            <div class="skeleton skel-circle"></div>
+            <div class="skeleton skel-circle"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-message" id="errorMsg">
+        <strong>Error:</strong> <span id="errorText"></span>
+      </div>
+
+      <div class="no-data" id="noData">
+        <div style="font-size: 50px; margin-bottom: 15px; color:#CBD5E1;"><i class="fas fa-box-open"></i></div>
+        <h3 style="color: #00B1A9;">Data Tidak Ditemukan</h3>
+        <p>Nomor registrasi yang Anda cari tidak tersedia dalam sistem.</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="results-header">
+          <div>
+            <h2><i class="fas fa-file-invoice"></i> Hasil Pencarian Reg:</h2>
+            <div class="reg-number" id="regNumber"></div>
+          </div>
+          <a href="#" target="_blank" id="btnWaTanya" class="btn-wa-admin">
+            <i class="fab fa-whatsapp" style="font-size:18px;"></i> Tanya Admin
+          </a>
+        </div>
+        
+        <div id="cardsContainer" class="cards-grid"></div>
+      </div>
+
+      <div class="main-footer-wrapper">
+        <div class="footer-contact-side">
+          <h3>Hubungi Kami:</h3>
+          <div class="contact-links">
+            <a href="https://wa.me/628134020648" target="_blank" class="contact-item wa"><i class="fab fa-whatsapp"></i> Hotline</a>
+            <a href="mailto:lokalabkesmastanbu@kemkes.go.id" target="_blank" class="contact-item email"><i class="fas fa-envelope"></i> e-mail</a>
+            <a href="https://www.facebook.com/balaitanahbumbu/" target="_blank" class="contact-item fb"><i class="fab fa-facebook"></i> Facebook</a>
+            <a href="https://www.instagram.com/labkesmas_tanahbumbu/" target="_blank" class="contact-item ig"><i class="fab fa-instagram"></i> Instagram</a>
+          </div>
+        </div>
+        <div class="footer-logo-side decor-image-container">
+          <img src="https://i.postimg.cc/pX70JSSx/trans-logo-Si-PESAN-LABU.png" alt="Si-PESAN LABU">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    var NOMOR_WA_ADMIN = "628134020648"; 
+    
+    // 👇 GANTI BAGIAN INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA 👇
+    var API_URL = "https://script.google.com/macros/s/AKfycbzuhtrp-12pjpM4chOMkNaYy7KtVNFAoK3QdRDzv_3Ej3l6uJKTHMCzStN1uZN-aLgJ/exec";
+    
+    document.getElementById('regInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') searchData();
+    });
+
+    function searchData() {
+      var input = document.getElementById('regInput').value.trim();
+      if (!input) { alert('Silakan masukkan nomor registrasi terlebih dahulu.'); return; }
+
+      document.getElementById('loading').classList.add('active');
+      document.getElementById('results').classList.remove('active');
+      document.getElementById('noData').classList.remove('active');
+      document.getElementById('errorMsg').classList.remove('active');
+      document.getElementById('searchBtn').disabled = true;
+
+      // 👇 MENGGUNAKAN FETCH UNTUK MENGAKSES API DARI LUAR (GITHUB) 👇
+      fetch(API_URL + "?reg=" + encodeURIComponent(input))
+        .then(response => response.json())
+        .then(response => {
+          document.getElementById('loading').classList.remove('active');
+          document.getElementById('searchBtn').disabled = false;
+          
+          if (!response.success) {
+            document.getElementById('errorText').textContent = response.error;
+            document.getElementById('errorMsg').classList.add('active');
+            return;
+          }
+
+          if (response.count === 0) {
+            document.getElementById('noData').classList.add('active');
+            return;
+          }
+
+          displayCards(input, response.data);
+        })
+        .catch(error => {
+          // Tangkap error jika URL salah atau CORS bermasalah
+          document.getElementById('loading').classList.remove('active');
+          document.getElementById('searchBtn').disabled = false;
+          document.getElementById('errorText').textContent = "Gagal terhubung ke database. Pastikan URL API sudah benar.";
+          document.getElementById('errorMsg').classList.add('active');
+        });
+    }
+
+    function displayCards(regNumber, data) {
+      document.getElementById('regNumber').textContent = regNumber;
+      
+      var pesanWAPintar = "Halo Admin Loka Labkesmas Tanah Bumbu, saya ingin bertanya mengenai status pengujian sampel saya dengan Nomor Tracking: *" + regNumber + "*.";
+      document.getElementById('btnWaTanya').href = "https://wa.me/" + NOMOR_WA_ADMIN + "?text=" + encodeURIComponent(pesanWAPintar);
+
+      var container = document.getElementById('cardsContainer');
+      container.innerHTML = ''; 
+
+      data.forEach(function(row) {
+        var statusClass = 'status-default';
+        var statusText = row.status || '-';
+        var statusLower = statusText.toLowerCase();
+        
+        var isSelesai = statusLower.includes('selesai') || statusLower.includes('terbit');
+        var isDitolak = statusLower === 'ditolak';
+        
+        if (isDitolak) {
+          statusClass = 'status-ditolak'; 
+        } else if (isSelesai) {
+          statusClass = 'status-selesai';
+        } else if (statusLower.includes('proses') || statusLower.includes('berjalan')) {
+          statusClass = 'status-proses';
+        }
+
+        var tglDiterima = (row.sampelDiterima && row.sampelDiterima !== '-') ? row.sampelDiterima : '-';
+
+        var steps = [
+          { label: 'Diterima', icon: 'fa-clipboard-check', date: tglDiterima, active: true },
+          { label: 'Unboxing', icon: 'fa-box-open', date: row.unboxing, active: row.unboxing && row.unboxing !== '-', isRejected: isDitolak },
+          { label: 'Diuji', icon: 'fa-microscope', date: row.mulaiPengujian, active: row.mulaiPengujian && row.mulaiPengujian !== '-' },
+          { label: 'LHUS', icon: 'fa-file-signature', date: row.lhusTerbit, active: row.lhusTerbit && row.lhusTerbit !== '-' },
+          { label: 'Selesai', icon: 'fa-check-double', date: row.lhuTerbit, active: isSelesai, isLast: true }
+        ];
+
+        var timelineHTML = '<div class="timeline-wrapper"><div class="timeline-track"></div><div class="timeline-steps">';
+        steps.forEach(function(step) {
+          var stateClass = '';
+          if (step.isRejected) {
+             stateClass = 'rejected'; 
+          } else if (step.active) {
+             stateClass = step.isLast ? 'active completed' : 'active';
+          }
+          
+          var dateTeks = step.active || step.isRejected ? escapeHtml(step.date) : '-';
+          
+          timelineHTML += 
+            '<div class="t-step ' + stateClass + '">' +
+              '<div class="t-icon"><i class="fas ' + (step.isRejected ? 'fa-times' : step.icon) + '"></i></div>' +
+              '<div class="t-label">' + (step.isRejected ? 'Ditolak' : step.label) + '</div>' +
+              '<div class="t-date">' + dateTeks + '</div>' +
+            '</div>';
+        });
+        timelineHTML += '</div>';
+
+        if (isDitolak) {
+          var alasanText = (row.alasanPenolakan && row.alasanPenolakan !== '-') ? escapeHtml(row.alasanPenolakan) : 'Sampel tidak memenuhi kriteria pengujian.';
+          timelineHTML += 
+            '<div class="timeline-penolakan">' +
+              '<i class="fas fa-times-circle"></i>' +
+              '<div><strong>ALASAN PENOLAKAN:</strong>' + alasanText + '</div>' +
+            '</div>';
+        } else if (row.kendala && row.kendala !== '-' && row.kendala.toLowerCase() !== 'tidak ada') {
+          timelineHTML += 
+            '<div class="timeline-kendala">' +
+              '<i class="fas fa-exclamation-circle"></i>' +
+              '<div><strong>Kendala Pada Proses Ini:</strong>' + escapeHtml(row.kendala) + '</div>' +
+            '</div>';
+        }
+
+        timelineHTML += '</div>';
+
+        var cardHTML = 
+          '<div class="sample-card">' +
+            '<div class="card-top">' +
+              '<div class="card-title"><i class="fas fa-vial"></i> ' + escapeHtml(row.jenisPengujian || 'Pengujian Sampel') + '</div>' +
+              '<span class="status-badge ' + statusClass + '">' + escapeHtml(statusText) + '</span>' +
+            '</div>' +
+            '<div class="card-info-grid">' +
+              '<div class="info-item"><i class="fas fa-cubes"></i> <span><strong>Jml Sampel:</strong> ' + escapeHtml(row.jumlahSampel || '-') + '</span></div>' +
+              '<div class="info-item"><i class="fas fa-calendar-check"></i> <span><strong>Estimasi Selesai:</strong> ' + escapeHtml(row.estimasiSelesai || '-') + '</span></div>' +
+            '</div>' +
+            timelineHTML +
+          '</div>';
+
+        container.innerHTML += cardHTML;
+      });
+
+      document.getElementById('results').classList.add('active');
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '-';
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
