@@ -72,7 +72,11 @@
     .status-ditolak { background: #FEE2E2; color: #B91C1C; } 
     .status-default { background: #F1F5F9; color: #64748B; }
 
-    .timeline-wrapper { position: relative; padding-top: 10px; background: #F8FAFC; padding: 20px; border-radius: 12px; border: 1px solid #E2E8F0; }
+    /* 👇 PERBAIKAN TIMELINE RESPONSIVE MOBILE 👇 */
+    .timeline-wrapper { position: relative; background: #F8FAFC; padding: 20px; border-radius: 12px; border: 1px solid #E2E8F0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    /* Inner box mengatur batas minimal lebar agar teks tanggal tidak gepeng */
+    .timeline-inner { position: relative; min-width: 420px; padding-top: 10px; }
+    
     .timeline-track { position: absolute; top: 35px; left: 10%; right: 10%; height: 3px; background: #CBD5E1; z-index: 1; }
     .timeline-steps { display: flex; justify-content: space-between; position: relative; z-index: 2; }
     .t-step { flex: 1; text-align: center; }
@@ -122,9 +126,12 @@
       .results-header { flex-direction: column; text-align: center; gap: 15px; }
       .btn-wa-admin { width: 100%; justify-content: center; } 
       .card-top { flex-direction: column; gap: 15px; align-items: flex-start; }
+      
+      /* Agar elemen track tidak nabrak saat digeser di HP */
+      .timeline-track { top: 28px; }
       .t-label, .t-date { font-size: 9px; }
       .t-icon { width: 28px; height: 28px; font-size: 11px; }
-      .timeline-track { top: 28px; }
+      
       .main-footer-wrapper { flex-direction: column-reverse; text-align: center; gap: 20px; }
       .contact-links { justify-content: center; }
     }
@@ -135,7 +142,8 @@
     
     <div class="header">
       <div class="logo-container">
-        <img src="https://i.postimg.cc/7ZLdY7Tg/Picture12.png" alt="Logo">
+        <!-- 👇 LOGO HEADER BARU 👇 -->
+        <img src="https://i.ibb.co.com/rRzp9YSZ/Picture12.png" alt="Logo">
       </div>
       <div class="header-text">
         <h1>PELACAKAN SAMPEL</h1>
@@ -203,7 +211,8 @@
           </div>
         </div>
         <div class="footer-logo-side decor-image-container">
-          <img src="https://i.postimg.cc/pX70JSSx/trans-logo-Si-PESAN-LABU.png" alt="Si-PESAN LABU">
+          <!-- 👇 LOGO FOOTER BARU 👇 -->
+          <img src="https://i.ibb.co.com/60dhp3xr/trans-logo-Si-PESAN-LABU.png" alt="Si-PESAN LABU">
         </div>
       </div>
 
@@ -230,7 +239,6 @@
       document.getElementById('errorMsg').classList.remove('active');
       document.getElementById('searchBtn').disabled = true;
 
-      // 👇 MENGGUNAKAN FETCH UNTUK MENGAKSES API DARI LUAR (GITHUB) 👇
       fetch(API_URL + "?reg=" + encodeURIComponent(input))
         .then(response => response.json())
         .then(response => {
@@ -251,7 +259,6 @@
           displayCards(input, response.data);
         })
         .catch(error => {
-          // Tangkap error jika URL salah atau CORS bermasalah
           document.getElementById('loading').classList.remove('active');
           document.getElementById('searchBtn').disabled = false;
           document.getElementById('errorText').textContent = "Gagal terhubung ke database. Pastikan URL API sudah benar.";
@@ -294,7 +301,9 @@
           { label: 'Selesai', icon: 'fa-check-double', date: row.lhuTerbit, active: isSelesai, isLast: true }
         ];
 
-        var timelineHTML = '<div class="timeline-wrapper"><div class="timeline-track"></div><div class="timeline-steps">';
+        // 👇 PERBAIKAN: Menambahkan div "timeline-inner" agar teks tidak gepeng 👇
+        var timelineHTML = '<div class="timeline-wrapper"><div class="timeline-inner"><div class="timeline-track"></div><div class="timeline-steps">';
+        
         steps.forEach(function(step) {
           var stateClass = '';
           if (step.isRejected) {
@@ -312,7 +321,7 @@
               '<div class="t-date">' + dateTeks + '</div>' +
             '</div>';
         });
-        timelineHTML += '</div>';
+        timelineHTML += '</div></div>'; // Menutup timeline-steps dan timeline-inner
 
         if (isDitolak) {
           var alasanText = (row.alasanPenolakan && row.alasanPenolakan !== '-') ? escapeHtml(row.alasanPenolakan) : 'Sampel tidak memenuhi kriteria pengujian.';
@@ -359,4 +368,3 @@
   </script>
 </body>
 </html>
-
